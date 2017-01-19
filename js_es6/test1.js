@@ -12,4 +12,4 @@ while (true) {
     break
 }
 
-console.log(name)  //zach
+console.log(name);  //zach

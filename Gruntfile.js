@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 		//es6转es5
 		babel: {
 			options: {
-				sourceMap: false,
+				sourceMap: true,
 				presets: ['babel-preset-es2015']
 			},
 			dist: {
@@ -20,28 +20,18 @@ module.exports = function(grunt) {
 				}
 			}
 		},
-		//js压缩
+		//压缩es5
 		uglify: {
 			options: {
 				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 			},
-			js1: {
+			es5: {
 				files: [{
 					expand: true,
 					cwd: 'js_es5', //js目录下
-					src: '*.js', //所有js文件
+					src: '**/*.js', //所有js文件
 					dest: 'js_es5_min', //输出到此目录下
-					ext: '.min.js'
-				}]
-			},
-			//TODO 只压缩test2.js
-			js2: {
-				files: [{
-					expand: true,
-					cwd: 'js_es5', //js目录下
-					src: 'test2.js', //所有js文件
-					dest: 'js_es5_min', //输出到此目录下
-					ext: '.min.js'
+					//ext: '.js'
 				}]
 			}
 		},
@@ -51,9 +41,6 @@ module.exports = function(grunt) {
 				keepSpecialComments: 0
 			},
 			target: {
-				/*files: {
-				    'css/style.min.css': ["css/style.css"]
-				}*/
 				files: [{
 					expand: true,
 					cwd: 'css', //js目录下
@@ -64,22 +51,31 @@ module.exports = function(grunt) {
 			}
 		},
 		watch: {
-			//监听所有文件
-			js: {
-				files: ['js_es5/test1.js', 'css/*.css', '!css/*.min.css', 'js_es6/test1.js'],
-				tasks: ['default'],
+			//压缩css
+			css: {
+				files: ['css/*.css', '!css/*.min.css'],
+				tasks: ['css'],
 				options: {
 					livereload: false
 				}
 			},
-			//TODO 只监听test2.js
-			js2: {
-				files: ['js_es5/test2.js'],
-				tasks: ['js2'], //TODO 触发js2这个task
+			//es6转es5
+			es6: {
+				files: ['js_es6/**/*.js'],
+				tasks: ['es6'],
 				options: {
 					livereload: false
 				}
 			},
+			//压缩es5
+			es5: {
+				files: ['js_es5/**/*.js'],
+				tasks: ['es5'],
+				options: {
+					livereload: false
+				}
+			},
+			
 		}
 	});
 
@@ -87,7 +83,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
-	grunt.registerTask('default', ['babel', 'uglify:js1', 'cssmin']);
-	grunt.registerTask('js2', ['uglify:js2']); //TODO 这是一个task,等会watch监测到test2.js发生变化时，会触发，执行uglify:js2
+	grunt.registerTask('default', ['babel', 'uglify', 'cssmin']);
 	grunt.registerTask('watcher', ['watch']);
+	
+	grunt.registerTask('css', ['cssmin']);
+	grunt.registerTask('es6', ['babel']);
+	grunt.registerTask('es5', ['uglify:es5']);
 };

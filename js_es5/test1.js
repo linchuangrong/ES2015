@@ -13,3 +13,4 @@ while (true) {
 }
 
 console.log(name); //zach
+//# sourceMappingURL=test1.js.map
